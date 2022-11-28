@@ -1,0 +1,19 @@
+{
+	"master_ip": "192.168.61.212",
+	"send_port": 6658,
+	"receive_port": 6587,
+	"target_agent_name": "T1204_01",
+	"env_name": "Qiqihar",
+    "imgs_dir": "textures",
+	"max_steps": 1000,
+	"max_distance": 600,
+	"min_distance": 100,
+	"max_direction": 90,
+	"exp_distance": 250,
+	"interval": 50,
+	"reset_area" : [-1500, 1000, -1500, 1000],
+	"continous_actions": {
+		"high": [100,    45],
+		"low":  [0,     0]
+	}
+}
