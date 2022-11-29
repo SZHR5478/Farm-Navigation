@@ -1,11 +1,12 @@
-import gym
+from gym import Env
 from gym import spaces
 import numpy as np
 import os
 import json
 import time
 from gym_farm.envs.interaction import UE4
-from gym_farm.envs.reward import reward_distance
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
 
 def load_env_setting(filename):
     f = open(get_settingpath(filename))
@@ -18,7 +19,7 @@ def get_settingpath(filename):
     gympath = os.path.dirname(gym_farm.__file__)
     return os.path.join(gympath,'envs',filename)
 
-class FarmNavigationEnv(gym.Env):
+class FarmNavigationEnv(Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
     def __init__(self,setting_file,render_mode=None):
@@ -83,5 +84,9 @@ class FarmNavigationEnv(gym.Env):
     def _get_info(self):
         return {"distance": np.linalg.norm(self.move_agent.get_pos() - self.target_agent.get_pos())}
 
-    def _render_frame(self):
-        pass
+    def _render_frame(self,observation):
+        ax = plt.subplot()
+        ax.imshow(observation)
+        def update(i):
+            ax.set_data(self._get_obs())
+        ani = FuncAnimation(plt.gcf(),update(),interval=200)

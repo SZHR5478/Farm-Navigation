@@ -60,3 +60,5 @@ class UE4():
 
     def get_pos(self):
         return np.array([self.x, self.y,self.z])
+    def get_currentimage(self):
+        return self.CurrentImage

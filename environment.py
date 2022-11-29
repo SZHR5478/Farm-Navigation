@@ -6,4 +6,6 @@ def create_env(env_id, **args):
     env = gym.make(env_id)
     return env
 
-create_env('gym_farm/FarmNavigationWorld-v0')
+env = create_env('gym_farm/FarmNavigationWorld-v0')
+env.reset()
+#env._render_frame()
