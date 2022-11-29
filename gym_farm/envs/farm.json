@@ -4,16 +4,11 @@
 	"receive_port": 6587,
 	"target_agent_name": "T1204_01",
 	"env_name": "Qiqihar",
-    "imgs_dir": "textures",
-	"max_steps": 1000,
-	"max_distance": 600,
-	"min_distance": 100,
-	"max_direction": 90,
-	"exp_distance": 250,
-	"interval": 50,
+	"historical_image_length": 10,
 	"reset_area" : [-1500, 1000, -1500, 1000],
 	"continous_actions": {
-		"high": [100,    45],
-		"low":  [0,     0]
-	}
+		"high": [15,    45],
+		"low":  [-5,     0]
+	},
+	"distance_threshold" : 0.1
 }
