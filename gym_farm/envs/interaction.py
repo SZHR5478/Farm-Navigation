@@ -1,5 +1,6 @@
 import numpy as np
 import rosproxy
+import time
 from collections import deque
 
 class UE4():
@@ -45,7 +46,9 @@ class UE4():
     def set_reset(self):
         Twist = rosproxy.message.geometry_msgs.Twist()
         Twist.linear.z = 1
-        self.publish_reset.Publish(Twist)
+        for i in range(3):
+            self.publish_reset.Publish(Twist)
+            time.sleep(1)
 
 
     def set_move(self, angle, velocity):
