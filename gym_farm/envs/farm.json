@@ -7,8 +7,8 @@
 	"historical_image_length": 10,
 	"reset_area" : [-1500, 1000, -1500, 1000],
 	"continous_actions": {
-		"high": [15,    45],
-		"low":  [-5,     0]
+		"high": [5, 0.25],
+		"low":  [-5, -0.25]
 	},
 	"distance_threshold" : 0.1
 }

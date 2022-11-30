@@ -6,7 +6,6 @@ import json
 import time
 from gym_farm.envs.interaction import UE4
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
 
 def load_env_setting(filename):
     f = open(get_settingpath(filename))
@@ -45,6 +44,8 @@ class FarmNavigationEnv(Env):
 
         assert render_mode is None or render_mode in self.metadata["render_modes"]
         self.render_mode = render_mode
+        self.fig = None
+
     def step(self, action):
         actions = np.squeeze(action)
         velocity = actions[0]
@@ -59,19 +60,18 @@ class FarmNavigationEnv(Env):
         info = self._get_info()
 
         if self.render_mode == "human":
-            self._render_frame()
+            self._render_frame(self._get_currentimage())
 
         return observation, reward, terminated, False, info
 
     def reset(self, ):
         self.move_agent.set_reset()
         self.target_agent.set_reset()
-        time.sleep(3)
 
         observation = self._get_obs()
         info = self._get_info()
         if self.render_mode == "human":
-            self._render_frame()
+            self._render_frame(self._get_currentimage())
         return observation, info
 
     def _isdone(self):
@@ -81,12 +81,19 @@ class FarmNavigationEnv(Env):
     def _get_obs(self):
         return self.move_agent.get_observation()
 
+    def _get_currentimage(self):
+        return self.move_agent.get_currentimage()
+
     def _get_info(self):
         return {"distance": np.linalg.norm(self.move_agent.get_pos() - self.target_agent.get_pos())}
 
-    def _render_frame(self,observation):
-        ax = plt.subplot()
-        ax.imshow(observation)
-        def update(i):
-            ax.set_data(self._get_obs())
-        ani = FuncAnimation(plt.gcf(),update(),interval=200)
+    def _render_frame(self,rgba):
+        if self.fig is None:
+            self.fig = plt.figure()  # an empty figure with no Axes
+        self.fig.suptitle('Real-Time Image Display')
+        ax = self.fig.add_subplot(1, 1, 1)
+        ax.axis('off')
+        ax.imshow(rgba)
+        # 停顿时间
+        plt.pause(1/self.metadata["render_fps"])
+        self.fig.clf()

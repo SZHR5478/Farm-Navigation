@@ -1,5 +1,6 @@
 import gym
 import gym_farm
+import numpy as np
 
 def create_env(env_id, **args):
 
@@ -7,5 +8,3 @@ def create_env(env_id, **args):
     return env
 
 env = create_env('gym_farm/FarmNavigationWorld-v0')
-env.reset()
-#env._render_frame()
