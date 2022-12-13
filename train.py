@@ -2,7 +2,7 @@ import numpy as np
 import torch
 import torch.optim as optim
 from environment import create_env
-
+from setproctitle import setproctitle as ptitle
 from model import build_model
 from player_util import Agent
 from tensorboardX import SummaryWriter
@@ -40,6 +40,7 @@ def train(rank, args, shared_model, optimizer, n_iters, env=None):
             optimizer = optim.Adam(params, lr=args.lr)
 
     env.seed(args.seed)
+    #(model, env, args, state, device)
     player = Agent(None, env, args, None, device)
     player.gpu_id = gpu_id
 

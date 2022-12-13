@@ -21,16 +21,16 @@ def get_settingpath(filename):
 class FarmNavigationEnv(Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
-    def __init__(self,setting_file,render_mode=None):
+    def __init__(self,setting_file,stack_frames,render_mode=None):
 
         setting = load_env_setting(setting_file)
         self.distance_threshold = setting['distance_threshold']
 
         # connect UE4
-        self.target_agent = UE4(master_ip=setting['master_ip'], send_port=setting['send_port'], receive_port=setting['receive_port'],historical_image_length=setting['historical_image_length'],
+        self.target_agent = UE4(master_ip=setting['master_ip'], send_port=setting['send_port'], receive_port=setting['receive_port'],historical_image_length=1,
                                 env_name=setting['env_name'], agent_name=setting['target_agent_name'])
 
-        self.move_agent = UE4(master_ip=setting['master_ip'], send_port=setting['send_port'],receive_port=setting['receive_port'],historical_image_length=setting['historical_image_length'],
+        self.move_agent = UE4(master_ip=setting['master_ip'], send_port=setting['send_port'],receive_port=setting['receive_port'],historical_image_length=stack_frames,
                                 env_name=setting['env_name'], agent_name= setting['target_agent_name'][:-1] + ('1' if setting['target_agent_name'][-1] == '0' else '0'))
 
         self.action_space = spaces.Box(low=np.array(setting['continous_actions']['low']),high=np.array(setting['continous_actions']['high']))

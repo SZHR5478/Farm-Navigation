@@ -1,11 +1,10 @@
-from __future__ import division
 import math
 import numpy as np
 import torch
 from torch.autograd import Variable
+from torch.nn.init import xavier_uniform_,zeros_
 import json
 import logging
-import cv2
 
 
 def setup_logger(logger_name, log_file, level=logging.INFO):
@@ -44,33 +43,20 @@ def ensure_shared_grads(model, shared_model, device, device_share):
             shared_param._grad = param.grad.to(device_share)
 
 
-def weights_init(m):
-    classname = m.__class__.__name__
-    if classname.find('Conv') != -1:
-        weight_shape = list(m.weight.data.size())
-        fan_in = np.prod(weight_shape[1:4])
-        fan_out = np.prod(weight_shape[2:4]) * weight_shape[0]
-        w_bound = np.sqrt(6. / (fan_in + fan_out))
-        m.weight.data.uniform_(-w_bound, w_bound)
-        m.bias.data.fill_(0)
-    elif classname.find('Linear') != -1:
-        weight_shape = list(m.weight.data.size())
-        fan_in = weight_shape[1]
-        fan_out = weight_shape[0]
-        w_bound = np.sqrt(6. / (fan_in + fan_out))
-        m.weight.data.uniform_(-w_bound, w_bound)
-        m.bias.data.fill_(0)
+def weights_init(module):
+    classname = module.__class__.__name__
+    if classname.find('Conv') != -1 or classname.find('Linear') != -1:
+        xavier_uniform_(module.weight.data)  #不包含两边界值
+        zeros_(module.bias.data)
 
-
-def weights_init_mlp(m):
-    classname = m.__class__.__name__
+def weights_init_mlp(module):
+    classname = module.__class__.__name__
     if classname.find('Linear') != -1:
-        m.weight.data.normal_(0, 1)
-        m.weight.data *= 1 / \
-            torch.sqrt(m.weight.data.pow(2).sum(1, keepdim=True))
-        if m.bias is not None:
-            m.bias.data.fill_(0)
-
+        module.weight.data.normal_(0, 1)            #标准正太分布
+        module.weight.data *= 1 / \
+            torch.sqrt(module.weight.data.pow(2).sum(1, keepdim=True))
+        if module.bias is not None:
+            zeros_(module.bias.data)
 
 def normal(x, mu, sigma, device):
     pi = np.array([math.pi])
@@ -79,15 +65,6 @@ def normal(x, mu, sigma, device):
     a = (-1 * (x - mu).pow(2) / (2 * sigma)).exp()
     b = 1 / (2 * sigma * pi.expand_as(sigma)).sqrt()
     return a * b
-
-
-def cv2_show(env, inv=True):
-    img = env.render(mode='rgb_array')
-    if inv:
-        img = img[..., ::-1]  # bgr->rgb
-    cv2.imshow('show_img', img)
-    cv2.waitKey(20)
-
 
 def check_path(path):
     import os

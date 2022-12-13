@@ -1,10 +1,8 @@
 import gym
 import gym_farm
-import numpy as np
 
-def create_env(env_id, **args):
+def create_env(args):
 
-    env = gym.make(env_id)
+    env = gym.make(id = args.env,stack_frames = args.stack_frames)
     return env
 
-env = create_env('gym_farm/FarmNavigationWorld-v0')
